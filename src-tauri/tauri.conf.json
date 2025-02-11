@@ -5,8 +5,8 @@
   "identifier": "com.deepseek-desktop.app",
   "build": {
     "beforeDevCommand": "yarn dev",
-    "devUrl": "http://localhost:1420",
-    "beforeBuildCommand": "yarn build",
+    "devUrl": "http://localhost:3000",
+    "beforeBuildCommand": "yarn generate",
     "frontendDist": "../dist"
   },
   "app": {
