@@ -1,10 +1,11 @@
 use mistralrs::{
-    GgufModelBuilder, IsqType, Model, NormalRequest, PagedAttentionMetaBuilder, Request,
-    RequestLike, TextMessageRole, TextMessages, TextModelBuilder,
+    GgufModelBuilder, Model, NormalRequest, Request, RequestLike, TextMessageRole, TextMessages,
 };
 use std::sync::Arc;
 use tokio::sync::mpsc::channel;
 use tokio_stream::wrappers::ReceiverStream;
+
+use crate::ChatRequest;
 
 #[derive(Clone)]
 pub struct CompletionModel {
@@ -14,7 +15,7 @@ pub struct CompletionModel {
 impl CompletionModel {
     pub async fn new() -> anyhow::Result<Self> {
         // Select a Mistral model
-        
+
         let model = GgufModelBuilder::new(
             "TheBloke/deepseek-llm-7B-chat-GGUF",
             vec!["deepseek-llm-7b-chat.Q5_K_S.gguf"],
@@ -22,9 +23,9 @@ impl CompletionModel {
         .with_tok_model_id("deepseek-ai/deepseek-llm-7b-chat")
         .with_logging()
         .build()
-        .await.unwrap();
+        .await
+        .unwrap();
 
-        // Create the MistralRs, which is a runner
         Ok(Self {
             model: Arc::new(model),
         })
@@ -32,30 +33,40 @@ impl CompletionModel {
 
     pub async fn complete(
         &self,
-        request_str: &str,
+        req: ChatRequest,
     ) -> anyhow::Result<ReceiverStream<mistralrs::Response>> {
-        let mut request = TextMessages::new().add_message(TextMessageRole::User, request_str);
+        let mut text_messages =
+            TextMessages::new().add_message(TextMessageRole::System, req.system_prompt);
+
+        for (role, content) in req.messages {
+            let role = match role.as_str() {
+                "user" => TextMessageRole::User,
+                "assistant" => TextMessageRole::Assistant,
+                _ => continue, // Skip unknown roles
+            };
+            text_messages = text_messages.add_message(role, content);
+        }
 
         let (tx, rx) = channel(1);
 
-        let (tools, tool_choice) = if let Some((a, b)) = request.take_tools() {
+        let (tools, tool_choice) = if let Some((a, b)) = text_messages.take_tools() {
             (Some(a), Some(b))
         } else {
             (None, None)
         };
         let request = Request::Normal(NormalRequest {
-            messages: request.take_messages(),
-            sampling_params: request.take_sampling_params(),
+            messages: text_messages.take_messages(),
+            sampling_params: text_messages.take_sampling_params(),
             response: tx,
-            return_logprobs: request.return_logprobs(),
+            return_logprobs: text_messages.return_logprobs(),
             is_streaming: true,
             id: 0,
-            constraint: request.take_constraint(),
+            constraint: text_messages.take_constraint(),
             suffix: None,
-            adapters: request.take_adapters(),
+            adapters: text_messages.take_adapters(),
             tools,
             tool_choice,
-            logits_processors: request.take_logits_processors(),
+            logits_processors: text_messages.take_logits_processors(),
             return_raw_logits: false,
         });
 

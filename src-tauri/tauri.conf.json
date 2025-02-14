@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "deepseek-desktop",
+  "productName": "LocalDeepseek",
   "version": "0.1.0",
-  "identifier": "com.deepseek-desktop.app",
+  "identifier": "com.local-deepseek.app",
   "build": {
     "beforeDevCommand": "yarn dev",
     "devUrl": "http://localhost:3000",
@@ -12,9 +12,9 @@
   "app": {
     "windows": [
       {
-        "title": "deepseek-desktop",
-        "width": 800,
-        "height": 600
+        "title": "Local Deepseek",
+        "width": 1000,
+        "height": 800
       }
     ],
     "security": {

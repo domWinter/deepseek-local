@@ -17,3 +17,5 @@ export const [useSidebar, provideSidebarContext] = createContext<{
   setOpenMobile: (value: boolean) => void
   toggleSidebar: () => void
 }>('Sidebar')
+
+export const SIDEBAR_STATE_KEY = Symbol('SIDEBAR_STATE')

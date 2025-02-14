@@ -1,7 +1,10 @@
 export default defineNuxtConfig({
   modules: [
-    '@nuxtjs/tailwindcss', 'shadcn-nuxt'
+    '@nuxtjs/tailwindcss', 'shadcn-nuxt', '@pinia/nuxt', '@nuxtjs/mdc'
   ],
+  tailwindcss: {
+    configPath: "~/tailwind.config.ts",
+  },
   shadcn: {
     /**
      * Prefix for all the imported component

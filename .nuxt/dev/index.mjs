@@ -713,7 +713,24 @@ const _inlineRuntimeConfig = {
       }
     }
   },
-  "public": {}
+  "public": {
+    "mdc": {
+      "components": {
+        "prose": true,
+        "map": {}
+      },
+      "headings": {
+        "anchorLinks": {
+          "h1": false,
+          "h2": true,
+          "h3": true,
+          "h4": true,
+          "h5": false,
+          "h6": false
+        }
+      }
+    }
+  }
 };
 const envOptions = {
   prefix: "NITRO_",
