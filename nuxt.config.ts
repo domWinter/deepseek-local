@@ -5,6 +5,7 @@ export default defineNuxtConfig({
   tailwindcss: {
     configPath: "~/tailwind.config.ts",
   },
+  compatibilityDate: '2024-07-19',
   shadcn: {
     /**
      * Prefix for all the imported component
